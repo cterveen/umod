@@ -24,7 +24,7 @@ sub getHeaders {
   my $self = shift;
 
   seek($self->{'fh'}, -20, 2);
-  $self->{'header'}->{'magick_number'} = $self->readDWord();
+  $self->{'header'}->{'magick_number'} = $self->readDWordGUID();
   $self->{'header'}->{'offset'} = $self->readDWord();
   $self->{'header'}->{'size'} = $self->readDWord();
   $self->{'header'}->{'version'} = $self->readDWord();
@@ -69,6 +69,15 @@ sub readDWord {
   my $char = read($self->{'fh'}, $string, 4);
   my $long = unpack("l", $string);
     
+  return $long;
+}
+
+sub readDWordGUID {
+  my $self = shift;
+  my $string;
+  my $char = read($self->{'fh'}, $string, 4);
+  my $long = unpack("L", $string);
+  
   return $long;
 }
 
