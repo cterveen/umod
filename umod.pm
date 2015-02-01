@@ -1,5 +1,6 @@
 package umod;
 
+use uIni;
 use strict;
 use warnings;
 
@@ -34,7 +35,7 @@ sub getHeaders {
 sub getDirectory {
   my $self = shift;
 
-  my @directory;
+  my %directory;
 
   seek($self->{'fh'}, $self->{'header'}->{'offset'}, 0);
   my $num_files = $self->readIndex();
@@ -45,10 +46,48 @@ sub getDirectory {
     my $offset = $self->readDWord();
     my $length = $self->readDWord();
     my $flags = $self->readDWord();
-
-    push(@directory, {filename => $filename, offset => $offset, length => $length, flags => $flags});
+    
+    $directory{$filename} = {filename => $filename, offset => $offset, length => $length, flags => $flags};
+    
+    # store the location of manifest.ini and manifest.int for later reference
+    if ($filename =~ m/system[\\\/]manifest.ini/i) {
+      $self->{'manifest_ini'} = $filename;
+    }
+    if ($filename =~ m/system[\\\/]manifest.int/i) {
+      $self->{'manifest_int'} = $filename;
+    }
   }
-  $self->{'directory'} = \@directory;
+  $self->{'directory'} = \%directory;
+}
+
+sub getManifest {
+  my $self = shift;
+  
+     $self->{'ini'} = uIni->new();
+  my $raw_manifest = $self->getFile($self->{'directory'}->{$self->{'manifest_ini'}}->{'offset'}, $self->{'directory'}->{$self->{'manifest_ini'}}->{'length'});
+     $self->{'ini'}->parse($raw_manifest);
+     
+  return $self->{'ini'};
+}
+
+sub isVulnerable {
+  my $self = shift;
+  
+  my $vulnerable;
+  unless ($self->{'directory'}->{$self->{'manifest_ini'}}->{'flags'} & 0x03) {
+    $vulnerable .= "Manifest.ini overwrite vulnerability\n";
+  }
+  unless ($self->{'directory'}->{$self->{'manifest_ini'}}->{'flags'} & 0x03) {
+    $vulnerable .= "Manifest.int overwrite vulnerability\n";
+  }
+  
+  foreach (keys %{$self->{'directory'}}) {
+    if (m/^\.\./) {
+      $vulnerable .= "Write outside directory vulnerability: $_\n";
+    }
+  }
+  
+  return $vulnerable;  
 }
 
 sub getFile {
