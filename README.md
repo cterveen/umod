@@ -12,11 +12,11 @@ The module has been used and performed well. Further development is not intended
 
 ## Installation
 
-Save the file in any Perl module directory
+Save the file in any Perl module directory.
 
 ## Use
 
-The script that used it should be shared
+To be written...
 
 ## Credits
 
