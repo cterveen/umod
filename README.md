@@ -6,13 +6,13 @@ umod
 
 umod is a Perl package to read and extract Unreal Tournaments umod files. The module was written for a script that could extract umod packages on linux.
 
-The module can be considered beta. No POD documentation or help file is available. The module is not on CPAN.
+The module can be considered beta and perfomed well. No POD documentation or help file is available. The module is not on CPAN.
 
-The module has been used and performed well. Further development is not intended.
+No further development is intended.
 
 ## Installation
 
-Save the file in any Perl module directory.
+Save umod.pm in any Perl module directory.
 
 ## Use
 
