@@ -20,7 +20,7 @@ To be written...
 
 ## Credits
 
-None
+Written by Christiaan ter Veen <https://www.rork.nl/>
 
 ## License
 
